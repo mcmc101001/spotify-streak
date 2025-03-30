@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:spotify_streak/pages/home.dart';
 import 'package:spotify_streak/pages/login_page.dart';
-import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 Future<void> main() async {
-  usePathUrlStrategy();
   await dotenv.load();
   await Supabase.initialize(
     url: dotenv.env['SUPABASE_URL'] ?? '',
@@ -19,6 +16,7 @@ final supabase = Supabase.instance.client;
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -35,24 +33,54 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home:
-          supabase.auth.currentSession == null
-              ? const LoginPage()
-              : const HomePage(),
-    );
-  }
-}
+      home: LoginPage(),
 
-extension ContextExtension on BuildContext {
-  void showSnackBar(String message, {bool isError = false}) {
-    ScaffoldMessenger.of(this).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor:
-            isError
-                ? Theme.of(this).colorScheme.error
-                : Theme.of(this).snackBarTheme.backgroundColor,
-      ),
+      // FutureBuilder<bool>(
+      //   future: _checkAuthCodeStatus(),
+      //   builder: (context, snapshot) {
+      //     if (snapshot.connectionState == ConnectionState.waiting) {
+      //       return const Scaffold(
+      //         body: Center(child: CircularProgressIndicator()),
+      //       );
+      //     }
+
+      //     if (snapshot.hasError) {
+      //       return const Scaffold(
+      //         body: Center(child: Text('Please verify your email')),
+      //       );
+      //     }
+
+      //     if (snapshot.data == true) {
+      //       return const HomePage();
+      //     } else if (supabase.auth.currentSession != null) {
+      //       return const LinkSpotifyPage();
+      //     } else {
+      //       return const LoginPage();
+      //     }
+      //   },
+      // ),
     );
   }
+
+  // Future<bool> _checkAuthCodeStatus() async {
+  //   try {
+  //     // Fetch the current user
+  //     final user = supabase.auth.currentUser;
+  //     if (user == null) return false;
+
+  //     // Fetch the user's profile
+  //     final response =
+  //         await supabase
+  //             .from('profiles')
+  //             .select('auth_code')
+  //             .eq('id', user.id)
+  //             .single();
+
+  //     // Return true if auth_code is not null
+  //     return response['auth_code'] != null;
+  //   } catch (e) {
+  //     print('Error checking auth code: $e');
+  //     return false;
+  //   }
+  // }
 }

@@ -3,9 +3,9 @@ import 'package:spotify_streak/main.dart';
 import 'package:spotify_streak/pages/login_page.dart';
 import 'package:spotify_streak/models/streak_model.dart';
 
-Future<void> _signOut() async {
-  await supabase.auth.signOut();
-}
+// Future<void> _signOut() async {
+//   await supabase.auth.signOut();
+// }
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -22,35 +22,41 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    super.initState();
     _getStreaks();
+  }
 
-    return DefaultTabController(
-      length: 2,
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            'Spotify Streak',
-            style: TextStyle(fontWeight: FontWeight.bold),
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: DefaultTabController(
+        length: 2,
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text(
+              'Spotify Streaks',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            centerTitle: true,
+            bottom: TabBar(
+              labelStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+              tabs: [Tab(child: Text("Friends")), Tab(child: Text("Artistes"))],
+            ),
           ),
-          centerTitle: true,
-          bottom: TabBar(
-            labelStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-            tabs: [Tab(child: Text("Friends")), Tab(child: Text("Artistes"))],
+          body: TabBarView(
+            children: [FriendStreaks(streaks: streaks), Placeholder()],
           ),
-        ),
-        body: TabBarView(
-          children: [FriendStreaks(streaks: streaks), Placeholder()],
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () async {
-            await _signOut();
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const LoginPage()),
-            );
-          },
-          child: Icon(Icons.logout),
+          // floatingActionButton: FloatingActionButton(
+          //   onPressed: () async {
+          //     await _signOut();
+          //     Navigator.pushReplacement(
+          //       context,
+          //       MaterialPageRoute(builder: (context) => const LoginPage()),
+          //     );
+          //   },
+          //   child: Icon(Icons.logout),
+          // ),
         ),
       ),
     );
